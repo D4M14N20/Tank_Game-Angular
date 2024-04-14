@@ -27,7 +27,7 @@ export class GameEngineService {
   drawDotGrid(ctx: CanvasRenderingContext2D, gridSize: number, dotSize: number, dotColor: string) {
     // Pobierz szerokość i wysokość canvasu
     const canvasWidth = ctx.canvas.width;
-    const canvasHeight = ctx.canvas.height;
+    const canvasHeight = ctx.canvas.height; 
     gridSize *= this.scale;
     dotSize *=this.scale;
     // Ustaw kolor punktów
