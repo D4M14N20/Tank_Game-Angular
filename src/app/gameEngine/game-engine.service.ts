@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { GameObject } from './gameObject';
 import { Player } from './player';
-import { Context } from 'vm';
 import { Vector2 } from './Vector2';
 import {Point} from "./point";
-import {randomInt} from "node:crypto";
 
 @Injectable({
   providedIn: 'root'
