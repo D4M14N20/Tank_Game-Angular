@@ -4,13 +4,13 @@ import { GameEngineService } from '../gameEngine/game-engine.service';
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [], 
+  imports: [],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
 export class GameComponent implements AfterViewInit{
   gameService : GameEngineService = inject(GameEngineService);
-  
+
   @ViewChild('gameCanvas') canvas: any;
   ngAfterViewInit(): void {
     this.gameService.setCanvas(this.canvas.nativeElement);
@@ -18,7 +18,15 @@ export class GameComponent implements AfterViewInit{
   }
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) { 
+  handleKeyboardEvent(event: KeyboardEvent) {
     this.gameService.keyDown(event.key);
+  }
+  @HostListener('document:keyup', ['$event'])
+  handleKeyboardEvent2(event: KeyboardEvent) {
+    this.gameService.keyUp(event.key);
+  }
+  @HostListener('document:mousewheel', ['$event'])
+  onScroll(event: WheelEvent) {
+    this.gameService.scroll(event.deltaY);
   }
 }

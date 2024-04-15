@@ -6,23 +6,29 @@ export class GameObject {
     gameObjectName : string = "GameObjectName";
     positon : Vector2 = new Vector2(0, 0);
     velocity : Vector2 = new Vector2(0, 0);
+    drag : number = 1;
     scale : Vector2 = new Vector2(0, 0);
+    color : string = "crimson";
+    size : number = 3;
     constructor(name: string) {
         this.gameObjectName = name;
     }
     go(deltaTime: number){
         this.positon = this.positon.plus(this.velocity.times(deltaTime));
+        this.velocity = this.velocity.times(1-this.drag*deltaTime);
     }
-    update(){}
+    update(deltaTime: number){}
     start(){}
-    keyPressed(key: string){}
-    draw(ctx: CanvasRenderingContext2D, size: [number, number], scale: number){
+    keyDown(key: string){}
+    keyUp(key: string){}
+    draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]){
         // Ustaw punkt środkowy okręgu
-        const centerX: number = size[0] / 2+this.positon.x*scale;
-        const centerY: number = size[1] / 2-this.positon.y*scale;
+        const centerX: number = size[0]/2+(this.positon.x-camera.x)*scale;
+        const centerY: number = size[1]/2-(this.positon.y-camera.y)*scale;
+
 
         // Ustaw promień okręgu
-        const radius: number = 3.14*scale;
+        const radius: number = this.size*scale;
 
         // Rozpocznij rysowanie ścieżki
         ctx.beginPath();
@@ -33,7 +39,7 @@ export class GameObject {
         // Ustaw styl linii i wypełnienie
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#000'; // Kolor linii
-        ctx.fillStyle = "crimson";//'rgb(72, 161, 141)'; // Kolor wypełnienia
+        ctx.fillStyle = this.color;//'rgb(72, 161, 141)'; // Kolor wypełnienia
 
         // Dodaj cień
         // ctx.shadowBlur = 10; // Rozmycie cienia
@@ -55,7 +61,7 @@ export class GameObject {
         var text = this.gameObjectName;
 
         // Właściwości tekstu
-        var textHeight = 1.5*scale;
+        var textHeight = this.size/3*scale;
         ctx.font = textHeight+"px Arial";
         ctx.fillStyle = "azure"; // Kolor wypełnienia tekstu
         ctx.strokeStyle = "black"; // Kolor obrysu tekstu
@@ -67,6 +73,6 @@ export class GameObject {
         ctx.strokeText(text, centerX-textWidth/2, centerY+textHeight/4); // Rysowanie obrysu tekstu
         ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4); // Rysowanie wypełnionego tekstu
         // Zakończ rysowanie
-        
+        ctx.closePath();
     }
 }
