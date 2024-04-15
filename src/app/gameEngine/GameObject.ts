@@ -1,4 +1,6 @@
+import { inject } from "@angular/core";
 import { Vector2 } from "./Vector2";
+import { GameEngineService } from "./game-engine.service";
 
 export class GameObject {
     gameObjectName : string = "GameObjectName";
@@ -11,6 +13,9 @@ export class GameObject {
     go(deltaTime: number){
         this.positon = this.positon.plus(this.velocity.times(deltaTime));
     }
+    update(){}
+    start(){}
+    keyPressed(key: string){}
     draw(ctx: CanvasRenderingContext2D, size: [number, number], scale: number){
         // Ustaw punkt środkowy okręgu
         const centerX: number = size[0] / 2+this.positon.x*scale;

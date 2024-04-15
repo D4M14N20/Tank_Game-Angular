@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injectable, ViewChild, inject, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Injectable, ViewChild, inject, AfterViewInit, HostListener } from '@angular/core';
 import { GameEngineService } from '../gameEngine/game-engine.service';
 
 @Component({
@@ -10,9 +10,15 @@ import { GameEngineService } from '../gameEngine/game-engine.service';
 })
 export class GameComponent implements AfterViewInit{
   gameService : GameEngineService = inject(GameEngineService);
+  
   @ViewChild('gameCanvas') canvas: any;
   ngAfterViewInit(): void {
     this.gameService.setCanvas(this.canvas.nativeElement);
     this.gameService.init();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    this.gameService.keyDown(event.key);
   }
 }

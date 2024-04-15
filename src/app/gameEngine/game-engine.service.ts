@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { GameObject } from './GameObject';
+import { GameObject } from './gameObject';
+import { Player } from './player';
 import { Context } from 'vm';
 import { Vector2 } from './Vector2';
 
@@ -12,6 +13,11 @@ export class GameEngineService {
   canvas : HTMLCanvasElement | null = null; 
   
   constructor() { }
+  
+  keyDown(key: string){
+    console.log(key);
+  }
+
   setCanvas(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
   }
@@ -70,17 +76,20 @@ export class GameEngineService {
     
     // Wyczyść canvas
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.drawDotGrid(ctx, 2, 0.25, 'rgb(10,20,25)'); // R
       
     // Tutaj umieść kod renderowania Twojej gry
-    this.g.draw(ctx, [this.canvas.width, this.canvas.height], this.scale);
-    this.g2.draw(ctx, [this.canvas.width, this.canvas.height], this.scale);
-    this.g2.go(deltaTime);
+    this.update(this.canvas, ctx, deltaTime);
     
     ctx.closePath();
 
     
     // Wywołaj funkcję renderowania w pętli
     requestAnimationFrame(this.render);
+  }
+  update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, deltaTime: number){
+    this.drawDotGrid(ctx, 2, 0.25, 'rgb(10,20,25)');
+    this.g.draw(ctx, [canvas.width, canvas.height], this.scale);
+    this.g2.draw(ctx, [canvas.width, canvas.height], this.scale);
+    this.g2.go(deltaTime);
   }
 }
