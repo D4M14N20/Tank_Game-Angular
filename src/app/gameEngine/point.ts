@@ -1,9 +1,10 @@
 import { GameObject } from "./gameObject";
 import {Vector2} from "./Vector2";
+import {GameEngineService} from "./game-engine.service";
 
 export class Point extends GameObject  {
-  constructor() {
-    super("");
+  constructor(game: GameEngineService) {
+    super(game, "");
     this.color = "rgb(25, 123, 231)";
     this.size = 1;
   }

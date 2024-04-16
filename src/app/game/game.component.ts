@@ -1,10 +1,13 @@
 import { Component, ElementRef, Injectable, ViewChild, inject, AfterViewInit, HostListener } from '@angular/core';
 import { GameEngineService } from '../gameEngine/game-engine.service';
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterLink
+  ],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -29,4 +32,8 @@ export class GameComponent implements AfterViewInit{
   onScroll(event: WheelEvent) {
     this.gameService.scroll(event.deltaY);
   }
+/*  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    this.gameService.setMousePosition(event.clientX, event.clientY);
+  }*/
 }

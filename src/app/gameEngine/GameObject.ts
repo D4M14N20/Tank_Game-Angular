@@ -3,15 +3,17 @@ import { Vector2 } from "./Vector2";
 import { GameEngineService } from "./game-engine.service";
 
 export class GameObject {
-    gameObjectName : string = "GameObjectName";
-    positon : Vector2 = new Vector2(0, 0);
-    velocity : Vector2 = new Vector2(0, 0);
-    drag : number = 1;
-    scale : Vector2 = new Vector2(0, 0);
-    color : string = "crimson";
-    size : number = 3;
-    constructor(name: string) {
+    public gameObjectName : string = "GameObjectName";
+    public positon : Vector2 = new Vector2(0, 0);
+    public velocity : Vector2 = new Vector2(0, 0);
+    public drag : number = 1;
+    //public scale : Vector2 = new Vector2(1, 1);
+    public color : string = "crimson";
+    public size : number = 3;
+    public readonly game : GameEngineService;
+    constructor(game: GameEngineService, name: string) {
         this.gameObjectName = name;
+        this.game = game;
     }
     go(deltaTime: number){
         this.positon = this.positon.plus(this.velocity.times(deltaTime));
@@ -37,41 +39,36 @@ export class GameObject {
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
 
         // Ustaw styl linii i wypełnienie
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#000'; // Kolor linii
+        ctx.lineWidth = scale*this.size/15;
+        ctx.strokeStyle = 'rgb(43,43,44)'; // Kolor linii
         ctx.fillStyle = this.color;//'rgb(72, 161, 141)'; // Kolor wypełnienia
 
         // Dodaj cień
-        // ctx.shadowBlur = 10; // Rozmycie cienia
-        // ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'; // Kolor cienia
-        // ctx.shadowOffsetX = 5; // Przesunięcie cienia w osi X
-        // ctx.shadowOffsetY = 5; // Przesunięcie cienia w osi Y
+        ctx.shadowBlur = 30; // Rozmycie cienia
+        ctx.shadowColor =  'rgba(0, 0, 0, 0.5)'; // Kolor cienia
+        ctx.shadowOffsetX = 0; // Przesunięcie cienia w osi X
+        ctx.shadowOffsetY = 0; // Przesunięcie cienia w osi Y
 
         // Narysuj kształt
         ctx.fill(); // Wypełnij okrąg kolorem
         ctx.stroke(); // Narysuj obrys okręgu
 
         // Wyczyść ustawienia cieni
-        // ctx.shadowBlur = 0;
-        // ctx.shadowColor = 'transparent';
-        // ctx.shadowOffsetX = 0;
-        // ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
-
-        var text = this.gameObjectName;
-
-        // Właściwości tekstu
-        var textHeight = this.size/3*scale;
+        const text = this.gameObjectName;
+        const textHeight = this.size/3*scale;
         ctx.font = textHeight+"px Arial";
-        ctx.fillStyle = "azure"; // Kolor wypełnienia tekstu
-        ctx.strokeStyle = "black"; // Kolor obrysu tekstu
-        ctx.lineWidth = 4; // Grubość obrysu tekstu
+        ctx.fillStyle = "azure";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 8;
+        const textWidth = ctx.measureText(text).width;
 
-        // Ustawienie tekstu na canvasie
-        var textWidth = ctx.measureText(text).width;
-
-        ctx.strokeText(text, centerX-textWidth/2, centerY+textHeight/4); // Rysowanie obrysu tekstu
-        ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4); // Rysowanie wypełnionego tekstu
+        ctx.strokeText(text, centerX-textWidth/2, centerY+textHeight/4);
+        ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4);
         // Zakończ rysowanie
         ctx.closePath();
     }
