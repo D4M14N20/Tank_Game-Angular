@@ -10,7 +10,8 @@ section, header{
     margin: 0;
 }
 :root {
-    --primary-color: rgb(49, 51, 54);
+    --primary-color: rgba(49, 51, 54, 0.4);
     --secondary-color: #c2002c;
     --dots: #8dc4ff;
+    --shadow: rgba(21, 21, 21, 0.4);
 }

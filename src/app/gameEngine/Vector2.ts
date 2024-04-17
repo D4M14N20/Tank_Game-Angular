@@ -20,6 +20,9 @@ export class Vector2 {
     magnitude(){
       return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
+    cross(): Vector2{
+        return  new Vector2(this.y, -this.x).toUnit();
+    }
     toUnit(){
       if(this.magnitude()!=0)
         return new Vector2(this.x, this.y).times(1/this.magnitude());

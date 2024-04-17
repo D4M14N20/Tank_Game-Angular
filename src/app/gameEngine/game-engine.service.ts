@@ -1,14 +1,25 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import { GameObject } from './gameObject';
 import { Player } from './player';
 import { Vector2 } from './Vector2';
 import {Point} from "./point";
+import {Bullet} from "./bullet";
+import {Color} from "./color";
 
 @Injectable({
   providedIn: 'root'
 })
-export class GameEngineService {
-  constructor() { }
+export class GameEngineService implements OnDestroy {
+  private readonly interval: any;
+  private readonly fixedDelta: number = 7;
+  constructor() {
+    this.interval = setInterval(() => {
+      this.fixedUpdate();
+    }, this.fixedDelta);
+  }
+  ngOnDestroy() {
+    clearInterval(this.interval);
+  }
 
   keyDown(key: string) {
     for (const gameObject of this.gameObjects)
@@ -25,7 +36,7 @@ export class GameEngineService {
   }
   scroll(delta: number){
     let ds = -(delta/100)*5;
-    if(this.targetScale+ds<100&&this.targetScale+ds>10)
+    if(this.targetScale+ds<100&&this.targetScale+ds>5)
       this.targetScale+=ds;
   }
   setCanvas(canvas: HTMLCanvasElement) {
@@ -124,19 +135,24 @@ export class GameEngineService {
     let index = this.gameObjects.indexOf(gameObject);
     if(index===-1)
       return;
+    if(gameObject instanceof Bullet){
+      let bullet = gameObject as Bullet;
+      if(!bullet.dead)
+        bullet.dead = true;
+      if(bullet.deadTime>0)
+        return;
+    }
     if(this.gameObjects[index]===gameObject)
       this.gameObjects.splice(index, 1);
-    else
-      this.destroy(gameObject);
   }
   start(){
     this.g.positon = new Vector2(10, 20);
     this.g2.positon = new Vector2(-50, 10);
     this.g2.velocity = new Vector2(5, 0);
     this.gameObjects.push(this.g, this.g2, this.p);
-    this.g2.color = "darkolivegreen"//"limegreen";
+    this.g2.color = new Color(40, 150, 30);
     this.g2.size = 6;
-    this.p.size = 4;
+    //let p2 = this.spawn(new Player(this, "wuda"));
     //this.p.color = "rgba(102,157,215,0.35)";
     //this.spawn(new Player("D41M4N")).positon = new Vector2(0, 5);
     //this.spawn(new Player("D41M4N")).positon = new Vector2(-4, 5.1);
@@ -145,7 +161,7 @@ export class GameEngineService {
       let point = new Point(this);
       //point.positon = new Vector2(randomInt(-100, 100), randomInt(-100, 100));
       point.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
-      point.color = `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`
+      point.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
       this.gameObjects.push(point);
     }
 
@@ -153,21 +169,22 @@ export class GameEngineService {
       gameObject.start();
     }
   }
-  update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, deltaTime: number){
+  fixedUpdate() {
+    let deltaTime = this.fixedDelta/1000;
     let targetCamera = this.p.positon;
-    //if(Vector2.distance(this.camera, targetCamera)>2){
-      //this.camera = this.camera.plus(  targetCamera.minus(this.camera).toUnit().times(deltaTime*10) );
-    //}
-    //this.camera = this.camera.plus(targetCamera.minus(this.camera).times(10*deltaTime));
-    //this.camera = targetCamera;
-    this.camera = this.camera.plus( targetCamera.minus(this.camera).times(0.025) );
+    this.camera = this.camera.plus( targetCamera.minus(this.camera).times(0.02) );
+    for (const gameObject of this.gameObjects)
+      gameObject.go(deltaTime);
+    this.p.fixedUpdate(deltaTime);
+  }
+  update(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, deltaTime: number){
 
     this.scale += (this.targetScale-this.scale)*(5*deltaTime);
 
     this.drawDotGrid(ctx, 5, 0.25, 'rgb(43,43,44)');
 
     this.gameObjects.sort((a : GameObject, b : GameObject) => (a.size +a.positon.y/1000> b.size+b.positon.y/1000)?1:-1);
-    for (const gameObject of this.gameObjects.filter(value => Vector2.distance(this.p.positon, value.positon)<100))
+    for (const gameObject of this.gameObjects.filter(value => Vector2.distance(this.p.positon, value.positon)<75))
       gameObject.draw(ctx, this.scale, this.camera, [canvas.width, canvas.height]);
     for (const gameObject of this.gameObjects)
       gameObject.update(deltaTime);
@@ -178,8 +195,7 @@ export class GameEngineService {
       this.g.positon = this.g.positon.plus(x.times(1/x.magnitude()).times(x.magnitude()-3));
     }*/
 
-    for (const gameObject of this.gameObjects)
-      gameObject.go(deltaTime);
+
     this.g2.gameObjectName = "Fps: "+this.fps.toFixed(2).toString();
   }
 }

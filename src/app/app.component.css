@@ -1,11 +1,10 @@
 
 header{
-    color: rgb(18, 18, 18);
     color: gainsboro;
     text-align: center;
     padding: 1px 0;
     background-color: var(--primary-color);
-    box-shadow: 0 4px 6px black;
+    box-shadow: 0 4px 6px var(--shadow);
     position: sticky;
     top: 0;
     z-index: 10;

@@ -1,18 +1,19 @@
 import { GameObject } from "./gameObject";
 import {Vector2} from "./Vector2";
 import {Point} from "./point";
-import {type} from "node:os";
 import {Player} from "./player";
-import {range} from "rxjs";
-import {GameEngineService} from "./game-engine.service";
+import {Color} from "./color";
+
 
 export class Bullet extends GameObject  {
   private readonly player: Player;
   private range: number = 45;
+  public dead: boolean = false;
+  public deadTime: number = 0.5;
   constructor(player: Player) {
     super(player.game, "");
     this.player = player;
-    this.color = "rgb(134,146,154)"
+    this.color = new Color(134,146,154);
     this.size = player.size/3;
     this.drag = 0;
   }
@@ -24,11 +25,11 @@ export class Bullet extends GameObject  {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.lineWidth = scale/5;
-    ctx.strokeStyle = 'rgb(43,43,44)';
-    ctx.fillStyle = this.player.color;
+    ctx.strokeStyle = new Color(43,43,44, this.color.a).toString();
+    ctx.fillStyle = this.color.toString();
 
     ctx.shadowBlur = 30; // Rozmycie cienia
-    ctx.shadowColor =  'rgba(0, 0, 0, 0.5)'; // Kolor cienia
+    ctx.shadowColor =  new Color(43,43,44, this.color.a/2).toString(); // Kolor cienia
 
     ctx.fill();
     ctx.stroke();
@@ -39,6 +40,14 @@ export class Bullet extends GameObject  {
   }
 
   override update(deltaTime: number) {
+    if(this.dead){
+      this.drag = 15;
+      this.deadTime -= deltaTime;
+      this.color.a = this.deadTime*2;
+      if(this.deadTime <= 0)
+        this.game.destroy(this);
+      return;
+    }
     this.range -= deltaTime*this.velocity.magnitude();
     if(this.range<0)
       this.game.destroy(this);
@@ -52,8 +61,10 @@ export class Bullet extends GameObject  {
       if (Vector2.distance(this.positon, gameObject.positon) < this.size+gameObject.size) {
         if(gameObject instanceof Point){
           this.game.destroy(gameObject);
-          this.player.size += Math.sqrt(gameObject.size)/70;
+          //this.player.size += Math.sqrt(gameObject.size)/70;
         }
+        gameObject.attack(10);
+        gameObject.velocity = gameObject.velocity.plus(this.velocity.times(1/50));
         this.game.destroy(this);
       }
     }
