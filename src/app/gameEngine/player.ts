@@ -17,6 +17,7 @@ export class Player extends GameObject {
   }
 
   private image = new Image();
+  private xp = 0;
   override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]) {
     const direction = this.game.mouse.plus(this.game.camera.minus(this.positon));
     const centerX: number = size[0]/2+(this.positon.x-camera.x)*scale;
@@ -46,8 +47,6 @@ export class Player extends GameObject {
     ctx.fillStyle = this.color.toString();
     ctx.shadowBlur = 30;
     ctx.shadowColor =  'rgba(0, 0, 0, 0.5)';
-    ctx.shadowBlur = 0;
-    ctx.shadowColor =  'rgba(0, 0, 0, 0.0)';
 
       ctx.save();
       ctx.clip();
@@ -59,6 +58,7 @@ export class Player extends GameObject {
 
     ctx.fill();
     ctx.stroke();
+    ctx.shadowBlur = 0;
     ctx.closePath();
 
 
@@ -77,7 +77,10 @@ export class Player extends GameObject {
     ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4);
     this.drawHealthBar(ctx, centerX-3*b, centerY-1.5*k, 6*b, b, this.hp, this.maxHp, scale);
   }
-
+  addXp(value: number){
+      this.xp += value;
+      this.game.setXp(this.xp, this.color.toArgb(0.9).toString());
+  }
   private delay = 0;
   shoot(delta: number){
     if(this.delay>0)
@@ -140,14 +143,15 @@ export class Player extends GameObject {
     }
 
 
-    for (const gameObject of this.game.gameObjects) {
+    for (const gameObject of this.game.closeObjects) {
       if(gameObject===this||!(gameObject instanceof Point)) continue;
       if (Vector2.distance(this.positon, gameObject.positon) < this.size&&this.size>gameObject.size) {
-        //this.size += Math.sqrt(gameObject.size)/20;
         this.game.destroy(gameObject);
-        this.attack(5);
+        this.attack(gameObject.getHp());
+        this.addXp(gameObject.maxHp);
         this.velocity = this.velocity.plus(this.positon.minus(gameObject.positon).toUnit().times(this.velocity.magnitude()/3));
       }
     }
   }
 }
+

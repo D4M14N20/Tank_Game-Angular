@@ -5,6 +5,7 @@ import { Vector2 } from './Vector2';
 import {Point} from "./point";
 import {Bullet} from "./bullet";
 import {Color} from "./color";
+import {Square} from "./square";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,13 @@ export class GameEngineService implements OnDestroy {
     clearInterval(this.interval);
   }
 
+  setXp(xp: number, color: string){
+    const myDiv = document.getElementById("xp");
+    if (myDiv){
+        myDiv.style.width = Math.round(xp/10)+"%";
+        myDiv.style.backgroundColor = color;
+    }
+  }
   keyDown(key: string) {
     for (const gameObject of this.gameObjects)
       gameObject.keyDown(key);
@@ -87,7 +95,8 @@ export class GameEngineService implements OnDestroy {
 
   }
 
-  public gameObjects: GameObject[] = [];
+  private gameObjects: GameObject[] = [];
+  public closeObjects: GameObject[] = [];
   private g = new GameObject(this, "obiekt 1");
   private g2 = new GameObject(this, "obiekt 2");
   private p : Player = new Player(this, "D4M14N");
@@ -120,6 +129,8 @@ export class GameEngineService implements OnDestroy {
       return;
 
     ctx.imageSmoothingEnabled = true;
+    ctx.strokeStyle = "rgb(43,43,44)";
+    ctx.shadowColor =  'rgba(0, 0, 0, 0.5)';
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -129,6 +140,7 @@ export class GameEngineService implements OnDestroy {
   }
   spawn(gameObject : GameObject){
     this.gameObjects.push(gameObject);
+    gameObject.start();
     return gameObject;
   }
   destroy(gameObject : GameObject){
@@ -157,23 +169,22 @@ export class GameEngineService implements OnDestroy {
     //this.spawn(new Player("D41M4N")).positon = new Vector2(0, 5);
     //this.spawn(new Player("D41M4N")).positon = new Vector2(-4, 5.1);
     //this.spawn(new Player("D41M4N")).positon = new Vector2(2, -5);
-    for(let i = 0;i<5000;i++){
-      let point = new Point(this);
+    for(let i = 0;i<1000;i++){
+      //let point = new Point(this);
       //point.positon = new Vector2(randomInt(-100, 100), randomInt(-100, 100));
-      point.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
-      point.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
-      this.gameObjects.push(point);
-    }
-
-    for (const gameObject of this.gameObjects) {
-      gameObject.start();
+      //point.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
+      //point.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
+      //this.gameObjects.push(point);
+      let x =this.spawn(new Square(this));
+      x.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
+      x.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
     }
   }
   fixedUpdate() {
     let deltaTime = this.fixedDelta/1000;
     let targetCamera = this.p.positon;
     this.camera = this.camera.plus( targetCamera.minus(this.camera).times(0.02) );
-    for (const gameObject of this.gameObjects)
+    for (const gameObject of this.closeObjects)
       gameObject.go(deltaTime);
     this.p.fixedUpdate(deltaTime);
   }
@@ -184,9 +195,10 @@ export class GameEngineService implements OnDestroy {
     this.drawDotGrid(ctx, 5, 0.25, 'rgb(43,43,44)');
 
     this.gameObjects.sort((a : GameObject, b : GameObject) => (a.size +a.positon.y/1000> b.size+b.positon.y/1000)?1:-1);
-    for (const gameObject of this.gameObjects.filter(value => Vector2.distance(this.p.positon, value.positon)<75))
+    this.closeObjects = this.gameObjects.filter(value => Vector2.distance(this.p.positon, value.positon)<75);
+    for (const gameObject of this.closeObjects)
       gameObject.draw(ctx, this.scale, this.camera, [canvas.width, canvas.height]);
-    for (const gameObject of this.gameObjects)
+    for (const gameObject of this.closeObjects)
       gameObject.update(deltaTime);
 
     this.addVignetteEffect(ctx, 'rgb(0,0,0, 0.4)');

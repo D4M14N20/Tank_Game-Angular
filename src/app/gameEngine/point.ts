@@ -5,11 +5,13 @@ import {Color} from "./color";
 
 export class Point extends GameObject  {
   constructor(game: GameEngineService) {
-    super(game, "");
+    super(game, "Point");
     this.color = new Color(25,123,231); //"rgb(25, 123, 231)";
     this.size = 1;
+    this.drag = 0.2;
   }
-  override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]){
+
+    override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]){
         const centerX: number = size[0]/2+(this.positon.x-camera.x)*scale;
         const centerY: number = size[1]/2-(this.positon.y-camera.y)*scale;
         const radius: number = this.size*scale;

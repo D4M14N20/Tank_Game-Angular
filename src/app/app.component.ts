@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, inject} from '@angular/core';
 import { RouterOutlet, Routes } from '@angular/router';
 import { GameComponent } from './game/game.component';
 
@@ -11,4 +11,12 @@ import { GameComponent } from './game/game.component';
 })
 export class AppComponent {
   title = 'projektAngular';
+  element: ElementRef<any> = inject(ElementRef);
+  full(){
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        this.element.nativeElement.requestFullscreen();
+    }
+  }
 }

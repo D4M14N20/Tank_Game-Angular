@@ -11,7 +11,7 @@ section, header{
 }
 :root {
     --primary-color: rgba(49, 51, 54, 0.4);
-    --secondary-color: #c2002c;
+    --secondary-color: rgba(220, 20, 60, 0.4);
     --dots: #8dc4ff;
     --shadow: rgba(21, 21, 21, 0.4);
 }

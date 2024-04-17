@@ -16,6 +16,7 @@ export class Bullet extends GameObject  {
     this.color = new Color(134,146,154);
     this.size = player.size/3;
     this.drag = 0;
+    this.maxHp = 10;
   }
   override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]) {
     const centerX: number = size[0]/2+(this.positon.x-camera.x)*scale;
@@ -28,17 +29,23 @@ export class Bullet extends GameObject  {
     ctx.strokeStyle = new Color(43,43,44, this.color.a).toString();
     ctx.fillStyle = this.color.toString();
 
-    ctx.shadowBlur = 30; // Rozmycie cienia
-    ctx.shadowColor =  new Color(43,43,44, this.color.a/2).toString(); // Kolor cienia
+    //ctx.shadowBlur = 30; // Rozmycie cienia
+    //ctx.shadowColor =  new Color(43,43,44, this.color.a/2).toString(); // Kolor cienia
 
     ctx.fill();
     ctx.stroke();
 
-    ctx.shadowBlur = 0; // Rozmycie cienia
-    ctx.shadowColor =  'rgba(0, 0, 0, 0.0)'; // Kolor cienia
+    //ctx.shadowBlur = 0; // Rozmycie cienia
+   // ctx.shadowColor =  'rgba(0, 0, 0, 0.5)'; // Kolor cienia
+    ctx.strokeStyle = Color.stroke.toString();
     ctx.closePath();
   }
-
+  override attack(damage: number) : number {
+      let ret = super.attack(damage);
+      if(this.hp<=0)
+          this.game.destroy(this);
+      return ret;
+  }
   override update(deltaTime: number) {
     if(this.dead){
       this.drag = 15;
@@ -52,20 +59,16 @@ export class Bullet extends GameObject  {
     if(this.range<0)
       this.game.destroy(this);
 
-    for (const gameObject of this.game.gameObjects) {
+    for (const gameObject of this.game.closeObjects) {
       if(!gameObject||gameObject===this||gameObject==this.player) continue;
-      if(gameObject instanceof Bullet){
-        if ((gameObject as Bullet).player === this.player)
-          continue;
-      }
+      if(gameObject instanceof Bullet&&(gameObject as Bullet).player === this.player)
+        continue;
       if (Vector2.distance(this.positon, gameObject.positon) < this.size+gameObject.size) {
-        if(gameObject instanceof Point){
-          this.game.destroy(gameObject);
-          //this.player.size += Math.sqrt(gameObject.size)/70;
-        }
-        gameObject.attack(10);
+        let dmg = gameObject.attack((this.hp/this.maxHp)*10);
+        this.attack(dmg);
+        if(gameObject.getHp()<=0)
+            this.player.addXp(gameObject.maxHp);
         gameObject.velocity = gameObject.velocity.plus(this.velocity.times(1/50));
-        this.game.destroy(this);
       }
     }
   }
