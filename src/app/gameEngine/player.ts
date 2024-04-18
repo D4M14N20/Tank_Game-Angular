@@ -1,11 +1,9 @@
 import { Vector2 } from "./Vector2";
 import { GameObject } from "./gameObject";
-import * as vm from "node:vm";
-import {delay} from "rxjs";
 import {Bullet} from "./bullet";
 import {GameEngineService} from "./game-engine.service";
-import {Point} from "./point";
 import {Color} from "./color";
+import {Square} from "./square";
 
 export class Player extends GameObject {
   private readonly reloadTime: number = 0.2;
@@ -18,13 +16,14 @@ export class Player extends GameObject {
 
   private image = new Image();
   private xp = 0;
+  private regeneration = 5;
   override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]) {
     const direction = this.game.mouse.plus(this.game.camera.minus(this.positon));
     const centerX: number = size[0]/2+(this.positon.x-camera.x)*scale;
     const centerY: number = size[1]/2-(this.positon.y-camera.y)*scale;
     const radius: number = this.size*scale;
     const width: number = this.size*0.7*scale;
-    const length: number = (3*(Math.abs(this.reloadTime/2-this.delay)) + 1.2)*scale*this.size;
+    const length: number = (3*(Math.abs((this.reloadTime/2-this.delay)/(this.reloadTime/2))/10) + 1.2)*scale*this.size;
     const k: number = scale*this.size;
     const b: number = scale;
 
@@ -69,20 +68,19 @@ export class Player extends GameObject {
     ctx.fillStyle = "azure";
     ctx.strokeStyle = Color.stroke.toString();
     ctx.lineWidth = this.size*scale/20;
-    ctx.lineJoin = 'miter';
-    ctx.miterLimit = 2;
     const textWidth = ctx.measureText(text).width;
 
     ctx.strokeText(text, centerX-textWidth/2, centerY+textHeight/4);
     ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4);
-    this.drawHealthBar(ctx, centerX-3*b, centerY-1.5*k, 6*b, b, this.hp, this.maxHp, scale);
+    ctx.lineJoin = "round";
+    this.drawHealthBar(ctx, centerX-3*b, centerY-1.5*k, 6*b, b, this.getHp(), this.maxHp, scale);
   }
   addXp(value: number){
       this.xp += value;
       this.game.setXp(this.xp, this.color.toArgb(0.9).toString());
   }
   private delay = 0;
-  shoot(delta: number){
+  shoot(){
     if(this.delay>0)
       return;
     let go = this.game.spawn(new Bullet(this));
@@ -135,21 +133,22 @@ export class Player extends GameObject {
       this.velocity = this.velocity.toUnit().times(vmax);
   }
   override update(deltaTime: number) {
+    this.heal(deltaTime*this.regeneration);
 
     if(this.delay>0)
       this.delay-=deltaTime;
     if (this.isPressed("e")) {
-      this.shoot(deltaTime);
+      this.shoot();
     }
 
 
     for (const gameObject of this.game.closeObjects) {
-      if(gameObject===this||!(gameObject instanceof Point)) continue;
+      if(gameObject===this||!(gameObject instanceof Square)) continue;
       if (Vector2.distance(this.positon, gameObject.positon) < this.size&&this.size>gameObject.size) {
         this.game.destroy(gameObject);
         this.attack(gameObject.getHp());
         this.addXp(gameObject.maxHp);
-        this.velocity = this.velocity.plus(this.positon.minus(gameObject.positon).toUnit().times(this.velocity.magnitude()/3));
+        this.velocity = this.velocity.plus(this.positon.minus(gameObject.positon).perpendicular(this.velocity).toUnit().times(this.velocity.magnitude()/2));
       }
     }
   }

@@ -2,10 +2,11 @@ import {Injectable, OnDestroy} from '@angular/core';
 import { GameObject } from './gameObject';
 import { Player } from './player';
 import { Vector2 } from './Vector2';
-import {Point} from "./point";
 import {Bullet} from "./bullet";
 import {Color} from "./color";
 import {Square} from "./square";
+import {Triangle} from "./triangle"
+import {Pentagon} from "./pentagon";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,6 @@ export class GameEngineService implements OnDestroy {
   ngOnDestroy() {
     clearInterval(this.interval);
   }
-
   setXp(xp: number, color: string){
     const myDiv = document.getElementById("xp");
     if (myDiv){
@@ -43,19 +43,14 @@ export class GameEngineService implements OnDestroy {
       gameObject.keyUp(key);
   }
   scroll(delta: number){
-    let ds = -(delta/100)*5;
-    if(this.targetScale+ds<100&&this.targetScale+ds>5)
-      this.targetScale+=ds;
+    delta = Math.sign(delta);
+      if(delta>0&&this.targetScale*0.9>5)
+        this.targetScale=0.9*this.targetScale;
+      if(delta<0&&this.targetScale*1.1<100)
+        this.targetScale=1.1*this.targetScale;
   }
   setCanvas(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-  }
-
-  init(){
-    this.start();
-    if(!this.canvas)
-      return;
-    this.mainLoop();
     this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
       if(!this.canvas)
         return;
@@ -66,6 +61,17 @@ export class GameEngineService implements OnDestroy {
       let mouseY = (event.clientY-rect.top)*scaleY;
       this.setMousePosition(mouseX, mouseY);
     });
+  }
+  private initialized: boolean = false;
+  init(){
+    if(this.initialized)
+      return;
+    this.initialized = true;
+
+    this.start();
+    if(!this.canvas)
+      return;
+    this.mainLoop();
   }
   addVignetteEffect(ctx: CanvasRenderingContext2D, color: string) {
     const centerX = ctx.canvas.width / 2;
@@ -99,7 +105,7 @@ export class GameEngineService implements OnDestroy {
   public closeObjects: GameObject[] = [];
   private g = new GameObject(this, "obiekt 1");
   private g2 = new GameObject(this, "obiekt 2");
-  private p : Player = new Player(this, "D4M14N");
+  private p : Player = new Player(this, "unnamed");
 
   private canvas : HTMLCanvasElement | null = null;
   private lastFrameTime = performance.now();
@@ -130,6 +136,7 @@ export class GameEngineService implements OnDestroy {
 
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = "rgb(43,43,44)";
+    ctx.lineJoin = "round";
     ctx.shadowColor =  'rgba(0, 0, 0, 0.5)';
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -157,6 +164,9 @@ export class GameEngineService implements OnDestroy {
     if(this.gameObjects[index]===gameObject)
       this.gameObjects.splice(index, 1);
   }
+  setName(name: string){
+    this.p.gameObjectName = name;
+  }
   start(){
     this.g.positon = new Vector2(10, 20);
     this.g2.positon = new Vector2(-50, 10);
@@ -164,18 +174,18 @@ export class GameEngineService implements OnDestroy {
     this.gameObjects.push(this.g, this.g2, this.p);
     this.g2.color = new Color(40, 150, 30);
     this.g2.size = 6;
-    //let p2 = this.spawn(new Player(this, "wuda"));
-    //this.p.color = "rgba(102,157,215,0.35)";
-    //this.spawn(new Player("D41M4N")).positon = new Vector2(0, 5);
-    //this.spawn(new Player("D41M4N")).positon = new Vector2(-4, 5.1);
-    //this.spawn(new Player("D41M4N")).positon = new Vector2(2, -5);
-    for(let i = 0;i<1000;i++){
-      //let point = new Point(this);
-      //point.positon = new Vector2(randomInt(-100, 100), randomInt(-100, 100));
-      //point.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
-      //point.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
-      //this.gameObjects.push(point);
+    for(let i = 0;i<600;i++){
       let x =this.spawn(new Square(this));
+      x.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
+      x.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
+    }
+    for(let i = 0;i<300;i++){
+      let x =this.spawn(new Triangle(this));
+      x.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
+      x.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
+    }
+    for(let i = 0;i<100;i++){
+      let x =this.spawn(new Pentagon(this));
       x.positon = new Vector2((Math.random()-0.5)*1000, (Math.random()-0.5)*1000);
       x.color = new Color(Math.random()*255, Math.random()*255, Math.random()*255);
     }

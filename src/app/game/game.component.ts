@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injectable, ViewChild, inject, AfterViewInit, HostListener } from '@angular/core';
+import { Component, ViewChild, inject, AfterViewInit, HostListener } from '@angular/core';
 import { GameEngineService } from '../gameEngine/game-engine.service';
 import {RouterLink} from "@angular/router";
 

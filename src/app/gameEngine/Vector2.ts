@@ -23,6 +23,15 @@ export class Vector2 {
     cross(): Vector2{
         return  new Vector2(this.y, -this.x).toUnit();
     }
+    scalarProduct(v: Vector2): number{
+        return this.x*v.x+this.y*v.y;
+    }
+    vectorProduct(v: Vector2): number{
+        return this.x*v.y-this.y*v.x;
+    }
+    perpendicular(n: Vector2){
+        return this.minus(n.cross().times((n.scalarProduct(this))/(n.magnitude()*n.magnitude())));
+    }
     toUnit(){
       if(this.magnitude()!=0)
         return new Vector2(this.x, this.y).times(1/this.magnitude());

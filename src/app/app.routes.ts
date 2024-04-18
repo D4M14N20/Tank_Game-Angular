@@ -5,12 +5,12 @@ import {MenuComponent} from "./menu/menu.component";
 export const routes: Routes = [
     {
       path: '',
-      component: GameComponent,
+      component: MenuComponent,
       title: 'Home page'
     },
     {
-      path: 'menu',
-      component: MenuComponent,
-      title: 'menu'
+      path: 'game',
+      component: GameComponent,
+      title: 'game'
     },
   ];

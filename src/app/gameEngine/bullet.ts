@@ -1,8 +1,8 @@
 import { GameObject } from "./gameObject";
 import {Vector2} from "./Vector2";
-import {Point} from "./point";
 import {Player} from "./player";
 import {Color} from "./color";
+import {Square} from "./square";
 
 
 export class Bullet extends GameObject  {
@@ -42,7 +42,7 @@ export class Bullet extends GameObject  {
   }
   override attack(damage: number) : number {
       let ret = super.attack(damage);
-      if(this.hp<=0)
+      if(this.getHp()<=0)
           this.game.destroy(this);
       return ret;
   }
@@ -64,11 +64,15 @@ export class Bullet extends GameObject  {
       if(gameObject instanceof Bullet&&(gameObject as Bullet).player === this.player)
         continue;
       if (Vector2.distance(this.positon, gameObject.positon) < this.size+gameObject.size) {
-        let dmg = gameObject.attack((this.hp/this.maxHp)*10);
+        let dmg = gameObject.attack((this.getHp()/this.maxHp)*10);
         this.attack(dmg);
         if(gameObject.getHp()<=0)
             this.player.addXp(gameObject.maxHp);
-        gameObject.velocity = gameObject.velocity.plus(this.velocity.times(1/50));
+        gameObject.velocity = gameObject.velocity.plus(this.velocity.times(1/20));
+        if(gameObject instanceof Square){
+          let sqr: Square = gameObject as Square;
+          sqr.rotSpeed -= this.positon.minus(sqr.positon).vectorProduct(this.velocity)/20;
+        }
       }
     }
   }

@@ -2,17 +2,19 @@ import {GameObject} from "./gameObject";
 import {GameEngineService} from "./game-engine.service";
 import {Vector2} from "./Vector2";
 import {Color} from "./color";
-import {Point} from "./point";
 
-export class Square extends Point{
-    private readonly rotSpeed: number;
-    private rotation: number = 0;
-    constructor(game: GameEngineService) {
-        super(game);
+export class Square extends GameObject{
+    private startSpeed: number;
+    public rotSpeed: number;
+    protected rotation: number = 0;
+    constructor(game: GameEngineService, name: string="square") {
+        super(game, name);
         this.color = new Color(189, 166, 62);// "rgb(189,166,62)";
         this.maxHp = 15;
-        this.rotSpeed = Math.random()-0.5;
+        this.startSpeed = Math.random()-0.5;
+        this.rotSpeed = this.startSpeed;
         this.size = 1.2;
+        this.drag = 0.4;
     }
     override draw(ctx: CanvasRenderingContext2D, scale: number, camera: Vector2, size: [number, number]) {
         const cx: number = size[0]/2+(this.positon.x-camera.x)*scale;
@@ -27,16 +29,15 @@ export class Square extends Point{
         ctx.translate(cx, cy);
         ctx.rotate(this.rotation);
         ctx.strokeRect(-k, -k, 2*k, 2*k);
-        //ctx.strokeRect(cx-k, cy-k, 2*k, 2*k);
         ctx.shadowBlur = 0;
-        //ctx.fillRect(cx-k, cy-k, 2*k, 2*k);
-
         ctx.fillRect(-k, -k, 2*k, 2*k);
         ctx.restore();
 
-        this.drawHealthBar(ctx, cx-3*u, cy-1.5*k-2*u, 6*u, u, this.hp, this.maxHp, scale);
+        this.drawHealthBar(ctx, cx-3*u, cy-1.5*k-2*u, 6*u, u, this.getHp(), this.maxHp, scale);
     }
     override update(deltaTime: number) {
         this.rotation += this.rotSpeed*deltaTime;
+        if(Math.abs(this.rotSpeed)>Math.abs(this.startSpeed))
+          this.rotSpeed -= deltaTime*Math.sign(this.rotSpeed);
     }
 }

@@ -1,8 +1,6 @@
-import {inject, numberAttribute} from "@angular/core";
 import { Vector2 } from "./Vector2";
 import { GameEngineService } from "./game-engine.service";
 import {Color} from "./color";
-import {max} from "rxjs";
 
 export class GameObject {
     public gameObjectName : string = "GameObjectName";
@@ -12,25 +10,34 @@ export class GameObject {
     //public scale : Vector2 = new Vector2(1, 1);
     public color : Color = new Color(124,22, 31);
     public size : number = 3;
-    public readonly maxHp: number = 100;
-    protected hp: number;
+    public maxHp: number = 100;
+    private hp: number = 100;
     public readonly game : GameEngineService;
     constructor(game: GameEngineService, name: string) {
         this.gameObjectName = name;
         this.game = game;
-        this.hp = this.maxHp;
     }
-    attack(damage: number){
+    attack(damage: number): number{
+        damage = Math.min(this.hp, damage);
         this.hp -= damage;
         if(this.hp<=0)
-            this.color = this.color.toArgb(0.3);
+            this.game.destroy(this);
+        return damage;
+    }
+    heal(heal: number){
+        this.hp = Math.min(this.maxHp, this.hp+heal);
+    }
+    getHp():number{
+        return this.hp;
     }
     go(deltaTime: number){
         this.positon = this.positon.plus(this.velocity.times(deltaTime));
         this.velocity = this.velocity.times(1-this.drag*deltaTime);
     }
     update(deltaTime: number){}
-    start(){}
+    start(){
+        this.hp = this.maxHp;
+    }
     keyDown(key: string){}
     keyUp(key: string){}
     drawHealthBar(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, health: number, maxHealth: number, scale: number): void {
@@ -67,21 +74,16 @@ export class GameObject {
         ctx.strokeStyle = 'rgb(43,43,44)'; // Kolor linii
         ctx.fillStyle = this.color.toString();//'rgb(72, 161, 141)'; // Kolor wypełnienia
 
-        // Dodaj cień
+
         ctx.shadowBlur = 30; // Rozmycie cienia
         ctx.shadowColor =  'rgba(0, 0, 0, 0.5)'; // Kolor cienia
-        ctx.shadowOffsetX = 0; // Przesunięcie cienia w osi X
-        ctx.shadowOffsetY = 0; // Przesunięcie cienia w osi Y
 
-        // Narysuj kształt
         ctx.fill(); // Wypełnij okrąg kolorem
         ctx.stroke(); // Narysuj obrys okręgu
 
-        // Wyczyść ustawienia cieni
+
         ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent';
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
+        ctx.closePath();
 
         const text = this.gameObjectName;
         const textHeight = this.size/3*scale;
@@ -95,7 +97,6 @@ export class GameObject {
 
         ctx.strokeText(text, centerX-textWidth/2, centerY+textHeight/4);
         ctx.fillText(text, centerX-textWidth/2, centerY+textHeight/4);
-        ctx.closePath();
         this.drawHealthBar(ctx, centerX-3*b, centerY-1.5*k, 6*b, b, this.hp, this.maxHp, scale);
     }
 }
