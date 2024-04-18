@@ -1,0 +1,9 @@
+section{
+    color: azure;
+    padding: 20px;
+    margin: auto;
+    margin-top: 40vh;
+    text-align: center;
+    background-color: var(--primary-color);
+    border-radius: 20px;
+}
