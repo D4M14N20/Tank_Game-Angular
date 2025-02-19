@@ -22,17 +22,17 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'  # Cache'uje zależności npm dla szybszego budowania
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: src/package-lock.json
 
       - name: Install dependencies
         run: |
-          cd frontend  # Przechodzimy do katalogu z aplikacją
+          cd src  # Przechodzimy do katalogu z aplikacją
           npm ci
 
 
       - name: Build Angular app
         run: |
-          cd frontend
+          cd src
           npm run build -- --configuration=production  # Budujemy aplikację
 
       - name: Upload artifacts
