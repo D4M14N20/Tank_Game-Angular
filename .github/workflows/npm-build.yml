@@ -35,8 +35,12 @@ jobs:
           cd src
           npm run build -- --configuration=production  # Budujemy aplikację
 
+      - name: Debug - List files after build
+        run: ls -R
+        
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: angular-build
-          path: dist/  # Przechowuje artefakty budowania (np. do późniejszego deployu)
+          path: src/dist/
+          if-no-files-found: error
