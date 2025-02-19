@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main  # Uruchamia workflow na PR do głównej gałęzi
+  workflow_dispatch:
 
 jobs:
   build:
