@@ -36,7 +36,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: angular-build
-          path: src/dist/
+          path: .
       
       # - name: Setup Pages
       #   uses: actions/configure-pages@v5
@@ -51,7 +51,7 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           branch: gh-pages
-          folder: src/dist/
+          folder: .
 
 
 
