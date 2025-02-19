@@ -1,5 +1,5 @@
 import { Vector2 } from "./Vector2";
-import { GameObject } from "./gameObject";
+import { GameObject } from "./GameObject";
 import {Bullet} from "./bullet";
 import {GameEngineService} from "./game-engine.service";
 import {Color} from "./color";

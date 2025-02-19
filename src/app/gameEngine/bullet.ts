@@ -1,4 +1,4 @@
-import { GameObject } from "./gameObject";
+import { GameObject } from "./GameObject";
 import {Vector2} from "./Vector2";
 import {Player} from "./player";
 import {Color} from "./color";

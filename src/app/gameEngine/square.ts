@@ -1,4 +1,4 @@
-import {GameObject} from "./gameObject";
+import {GameObject} from "./GameObject";
 import {GameEngineService} from "./game-engine.service";
 import {Vector2} from "./Vector2";
 import {Color} from "./color";

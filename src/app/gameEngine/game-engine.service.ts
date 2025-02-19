@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import { GameObject } from './gameObject';
+import { GameObject } from './GameObject';
 import { Player } from './player';
 import { Vector2 } from './Vector2';
 import {Bullet} from "./bullet";
