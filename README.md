@@ -1,27 +1,24 @@
-# Tank Game - Angular
+# Tank game - Angular Demo [Legacy version]
+![image](https://github.com/user-attachments/assets/6b54a10a-591d-4a05-a7aa-167c545c2307)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.4.
 
-## Development server
+## 📜 About the Project
+Tank game implemented in Angular framework (typescript).
+Developed as a singleplayer game demo inspired by ("diep.io")[https://diep.io/].
+Doesn't support multi-player PvP mode. 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 📥 Deployment (GitHub Pages)
+`https://d4m14n-gh.github.io/Tank_Game-Angular`:
+[`Play`](https://d4m14n-gh.github.io/Tank_Game-Angular/) 
 
-## Code scaffolding
+Steps:
+- Enter name in text input.
+- Click the play button.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## 👥 Authors
+- [@d4m14n-gh](https://github.com/d4m14n-gh)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## ⚖️License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
