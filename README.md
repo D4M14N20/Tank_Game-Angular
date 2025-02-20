@@ -18,6 +18,7 @@ Steps:
 Controls:
 - move: `[w|s|a|d]`
 - shoot: `[e]`
+- zoom: `(scroll)`
 
 ## 👥 Authors
 - [@d4m14n-gh](https://github.com/d4m14n-gh)
