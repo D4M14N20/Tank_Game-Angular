@@ -4,7 +4,7 @@
 
 ## 📜 About the Project
 Tank game implemented in Angular framework (typescript).
-Developed as a singleplayer game demo inspired by ["diep.io"](https://diep.io).
+Developed as a singleplayer game demo inspired by ["diep.io"](https://diep.io) game.
 Doesn't support multi-player PvP mode. 
 
 ## 📥 Deployment (GitHub Pages)
