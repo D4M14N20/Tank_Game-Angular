@@ -9,6 +9,17 @@ on:
       - main  # Uruchamia workflow na PR do głównej gałęzi
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,3 +55,10 @@ jobs:
           name: angular-build
           path: src/dist/
           if-no-files-found: error
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # Gałąź, na której będzie opublikowana strona
+          folder: src/dist/browser  # Folder, który zawiera zbudowane pliki, np. 'dist' w przypadku Angulara
+          token: ${{ secrets.GITHUB_TOKEN }}  # Token do autentykacji, GitHub automatycznie przekazuje GITHUB_TOKEN
