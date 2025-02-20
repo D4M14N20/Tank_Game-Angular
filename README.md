@@ -15,6 +15,9 @@ Steps:
 - Enter name in text input.
 - Click the play button.
 
+Controls:
+- move: `[w|s|a|d]`
+- shoot: `[e]`
 
 ## 👥 Authors
 - [@d4m14n-gh](https://github.com/d4m14n-gh)
