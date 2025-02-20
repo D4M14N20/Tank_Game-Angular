@@ -60,5 +60,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages  # Gałąź, na której będzie opublikowana strona
-          folder: src/dist/browser/  # Folder, który zawiera zbudowane pliki, np. 'dist' w przypadku Angulara
+          folder: src/dist/  # Folder, który zawiera zbudowane pliki, np. 'dist' w przypadku Angulara
           token: ${{ secrets.GITHUB_TOKEN }}  # Token do autentykacji, GitHub automatycznie przekazuje GITHUB_TOKEN
