@@ -6,11 +6,11 @@ export const routes: Routes = [
     {
       path: '',
       component: MenuComponent,
-      title: 'Home page'
+      title: 'd4m14n-gh/Tank_Game-Angular'
     },
     {
       path: 'game',
       component: GameComponent,
-      title: 'game'
+      title: 'd4m14n-gh/Tank_Game-Angular'
     },
   ];
