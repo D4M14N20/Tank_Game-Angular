@@ -10,7 +10,7 @@ export class Player extends GameObject {
   constructor(game: GameEngineService, name: string) {
     super(game, name);
     this.color = new Color(220,151,54, 0.34); //"rgba(0,91,194,0.34)";
-    this.image.src = '..\\..\\assets\\x.png';
+    this.image.src = 'assets/y.jpg';
 
   }
 
